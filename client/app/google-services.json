@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "580572019975",
+    "firebase_url": "https://vku-app-cecd3-default-rtdb.firebaseio.com",
+    "project_id": "vku-app-cecd3",
+    "storage_bucket": "vku-app-cecd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:580572019975:android:b3bd3edcca4e39c20499a2",
+        "android_client_info": {
+          "package_name": "com.dacs.vku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "580572019975-h4j2s53sv1grsntub9filro93pk8gcao.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dacs.vku",
+            "certificate_hash": "e8b134f0d44d0ab46292ec59ffdbe5bc61715446"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfo6WU8Nx1sT_4Q1WNEJCTE0Gf0WUXP9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "580572019975-kmcjhb34jo9b789f47qpo05c7d1ap3t3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

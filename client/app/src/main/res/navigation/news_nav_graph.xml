@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/news_nav_graph"
+    app:startDestination="@id/daotaoFragment">
+
+    <fragment
+        android:id="@+id/daotaoFragment"
+        android:name="com.dacs.vku.ui.fragments.NotificationListFragment"
+        android:label="DaoTao">
+        <action
+            android:id="@+id/action_daotaoFragment_to_articleFragment"
+            app:destination="@id/articleFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/savedFragment"
+        android:name="com.dacs.vku.ui.fragments.SavedFragments"
+        android:label="FavouritesFragment">
+        <action
+            android:id="@+id/action_savedFragment_to_articleFragment"
+            app:destination="@id/articleFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.dacs.vku.ui.fragments.SearchFragment"
+        android:label="SearchFragment">
+        <action
+            android:id="@+id/action_searchFragment_to_articleFragment"
+            app:destination="@id/articleFragment"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/authenticationFragment"
+        android:name="com.dacs.vku.ui.fragments.LoginRegister"
+        android:label="AuthenFragment">
+        <action
+            android:id="@+id/action_AuthenticationFragment_to_ProfileFragment"
+            app:destination="@id/profileFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/articleFragment"
+        android:name="com.dacs.vku.ui.fragments.NotificationFragment"
+        android:label="NotificationFragment" >
+        <argument
+            android:name="notification"
+            app:argType="com.dacs.vku.models.Notification" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.dacs.vku.ui.fragments.Authentication.Profile_fragment"
+        android:label="ProfileFragment" >
+        <argument
+            android:name="profile"
+            app:argType="com.dacs.vku.api.UserData"
+            android:defaultValue="@null"
+            app:nullable="true"
+            />
+        <action
+            android:id="@+id/action_ProfileFragment_to_ScheduleFragment"
+            app:destination="@id/scheduleFragment"/>
+        <action
+            android:id="@+id/action_ProfileFragment_to_AlarmFragment"
+            app:destination="@id/alarmFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.dacs.vku.ui.fragments.Authentication.ScheduleFragment"
+        android:label="ScheduleFragment">
+        <argument
+            android:name="profile"
+            app:argType="com.dacs.vku.api.UserData"
+            android:defaultValue="@null"
+            app:nullable="true"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.dacs.vku.ui.fragments.alarm.AlarmFragment"
+        android:label="ScheduleFragment">
+<!--        <argument-->
+<!--            android:name="profile"-->
+<!--            app:argType="com.dacs.vku.api.UserData"-->
+<!--            android:defaultValue="@null"-->
+<!--            app:nullable="true"-->
+<!--            />-->
+    </fragment>
+
+
+</navigation>

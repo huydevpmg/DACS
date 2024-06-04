@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/daotaoFragment"
+        android:icon="@drawable/ic_home"
+        android:title="Notification" />
+
+<!--    <item android:id="@+id/CTSV"-->
+<!--        android:title="CTSV"-->
+<!--        android:icon="@drawable/ic_close" />-->
+
+<!--    <item android:id="@+id/KHTC"-->
+<!--        android:title="KHTC"-->
+<!--        android:icon="@drawable/ic_home" />-->
+
+
+
+    <item android:id="@+id/searchFragment"
+        android:title="Search"
+        android:icon="@drawable/ic_search" />
+
+    <item android:id="@+id/savedFragment"
+        android:title="Saved"
+        android:icon="@drawable/ic_bookmark" />
+
+    <item android:id="@+id/authenticationFragment"
+        android:title="Auth"
+        android:icon="@drawable/ic_network" />
+</menu>
+
