@@ -47,14 +47,15 @@ app.post('/verify-user', async (req, res) => {
 
 
   app.post('/add-schedule', async (req, res) => {
-      const { scheduleId, userId, dayOfWeek, time, room, subject } = req.body;
+    // scheduleId, userId, dayOfWeekString, date, time, room, subject
+      const { scheduleId, userId, dayOfWeek, date, time, room, subject } = req.body;
       console.log(req.body)
-      if (!userId || !dayOfWeek || !time || !room || !subject) {
+      if (!userId || !dayOfWeek || !time || !room || !subject || !date) {
           return res.status(400).json({ message: 'Missing required fields' });
       }
   
       try {
-          const scheduleData = { scheduleId, dayOfWeek, time, room, subject };
+          const scheduleData = {scheduleId, userId, dayOfWeek, date, time, room, subject};
   
           const userRef = db.collection('users').doc(userId);
           await userRef.collection('schedules').doc(scheduleId).set(scheduleData);
@@ -93,11 +94,11 @@ app.post('/delete-schedule', async (req, res) => {
 });
 
 app.post('/update-schedule', async (req, res) => {
-  const { scheduleId, userId, dayOfWeek, time, room, subject } = req.body;
+  const {  scheduleId, userId, dayOfWeek, date, time, room, subject } = req.body;
 
-  if (!scheduleId || !userId || !dayOfWeek || !time || !room || !subject) {
+  if (!userId || !dayOfWeek || !time || !room || !subject || !date) {
     return res.status(400).json({ message: 'Missing required fields' });
-  }
+}
 
   try {
     const scheduleRef = db.collection('users').doc(userId).collection('schedules').doc(scheduleId);
@@ -109,6 +110,7 @@ app.post('/update-schedule', async (req, res) => {
 
     const updatedSchedule = {
       dayOfWeek,
+      date,
       time,
       room,
       subject

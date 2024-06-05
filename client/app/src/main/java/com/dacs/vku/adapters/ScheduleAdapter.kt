@@ -1,6 +1,5 @@
 package com.dacs.vku.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,53 +10,49 @@ import com.dacs.vku.R
 import com.dacs.vku.models.Schedule
 
 class ScheduleAdapter(
-    private val scheduleList: MutableList<Schedule>,
+    private val schedules: MutableList<Schedule>,
     private val onEditClick: (Schedule) -> Unit,
     private val onDeleteClick: (Schedule) -> Unit
 ) : RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>() {
 
     inner class ScheduleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(schedule: Schedule) {
-            itemView.findViewById<TextView>(R.id.tvDayOfWeek).text = schedule.dayOfWeek
-            itemView.findViewById<TextView>(R.id.tvSubject).text = schedule.subject
-            itemView.findViewById<TextView>(R.id.tvTime).text = schedule.time
-            itemView.findViewById<TextView>(R.id.tvRoom).text = schedule.room
-
-            itemView.findViewById<Button>(R.id.editButton).setOnClickListener {
-                onEditClick(schedule)
-            }
-
-            itemView.findViewById<Button>(R.id.deleteButton).setOnClickListener {
-                onDeleteClick(schedule)
-            }
-        }
+        val tvDayOfWeek: TextView = itemView.findViewById(R.id.tvDayOfWeek)
+        val tvTime: TextView = itemView.findViewById(R.id.tvTime)
+        val tvRoom: TextView = itemView.findViewById(R.id.tvRoom)
+        val tvSubject: TextView = itemView.findViewById(R.id.tvSubject)
+        val editButton: Button = itemView.findViewById(R.id.editButton)
+        val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_schedule, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_schedule, parent, false)
         return ScheduleViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
-        holder.bind(scheduleList[position])
+        val schedule = schedules[position]
+        holder.tvDayOfWeek.text = schedule.dayOfWeek
+        holder.tvTime.text = schedule.time
+        holder.tvRoom.text = schedule.room
+        holder.tvSubject.text = schedule.subject
+
+        holder.editButton.setOnClickListener { onEditClick(schedule) }
+        holder.deleteButton.setOnClickListener { onDeleteClick(schedule) }
     }
 
-    override fun getItemCount(): Int = scheduleList.size
+    override fun getItemCount(): Int = schedules.size
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateScheduleList(newScheduleList: MutableList<Schedule>) {
-        scheduleList.clear()
-        scheduleList.addAll(newScheduleList)
+    fun updateScheduleList(newSchedules: MutableList<Schedule>) {
+        schedules.clear()
+        schedules.addAll(newSchedules)
         notifyDataSetChanged()
     }
 
     fun removeSchedule(schedule: Schedule) {
-        val position = scheduleList.indexOf(schedule)
-        if (position != -1) {
-            scheduleList.removeAt(position)
+        val position = schedules.indexOf(schedule)
+        if (position >= 0) {
+            schedules.removeAt(position)
             notifyItemRemoved(position)
         }
     }
-
 }

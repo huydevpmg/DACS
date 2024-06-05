@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/etEditDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Select Date"
+        android:focusable="false"
+        android:clickable="true" />
+
+    <EditText
+        android:id="@+id/etEditTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Select Time"
+        android:focusable="false"
+        android:clickable="true" />
+    <EditText
+        android:id="@+id/etDayOfWeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Day of Week (auto)"
+        android:focusable="false"
+        android:clickable="false" />
+
+    <EditText
+        android:id="@+id/etEditSubject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Subject" />
+
+    <EditText
+        android:id="@+id/etEditRoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Room" />
+
+    <Button
+        android:id="@+id/btnUpdateSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update Schedule" />
+
+</LinearLayout>

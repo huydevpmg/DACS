@@ -1,3 +1,5 @@
+package com.dacs.vku.ui.fragments.alarm
+
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.DatePickerDialog
@@ -6,7 +8,6 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,14 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dacs.vku.R
 import com.dacs.vku.adapters.AlarmAdapter
 import com.dacs.vku.adapters.AlarmReceiver
-import com.dacs.vku.api.RetrofitInstance
-import com.dacs.vku.api.RetrofitInstance.Companion.api
 import com.dacs.vku.models.Alarm
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.Calendar
 
 class AlarmFragment : Fragment() {
@@ -134,15 +129,15 @@ class AlarmFragment : Fragment() {
 //        call.enqueue(object : Callback<ResponseBody> {
 //            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 //                if (response.isSuccessful) {
-//                    Log.d("ScheduleFragment", "User data sent successfully")
+//                    Log.d("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "User data sent successfully")
 //                } else {
-//                    Log.e("ScheduleFragment", "Failed to send user data: ${response.errorBody()?.string()}")
+//                    Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Failed to send user data: ${response.errorBody()?.string()}")
 //                    Toast.makeText(requireContext(), "Failed to send user data", Toast.LENGTH_SHORT).show()
 //                }
 //            }
 //
 //            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                Log.e("ScheduleFragment", "Error sending user data", t)
+//                Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Error sending user data", t)
 //                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
 //            }
 //        })

@@ -32,6 +32,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -80,7 +81,8 @@ dependencies {
     ksp ("com.github.bumptech.glide:compiler:4.12.0")
 
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
-    implementation ("com.google.android.gms:play-services-auth:21.1.1")
+    implementation ("com.google.android.gms:play-services-auth:21.2.0")
+
 
 
 }

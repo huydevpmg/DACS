@@ -1,34 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
-    <Spinner
-        android:id="@+id/spinnerEditDaysOfWeek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/days_of_week" />
+
     <EditText
-        android:id="@+id/etEditTime"
+        android:id="@+id/etDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Time" />
+        android:hint="Select Date"
+        android:focusable="false"
+        android:clickable="true" />
+
     <EditText
-        android:id="@+id/etEditRoom"
+        android:id="@+id/etTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Room" />
+        android:hint="Select Time"
+        android:focusable="false"
+        android:clickable="true" />
+    <EditText
+        android:id="@+id/etDayOfWeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Day of Week (auto)"
+        android:focusable="false"
+        android:clickable="false" />
+
     <EditText
         android:id="@+id/etEditSubject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Subject" />
 
-
-    <Button
-        android:id="@+id/btnUpdateSchedule"
+    <EditText
+        android:id="@+id/etEditRoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update" />
+        android:hint="Room" />
+
+    <Button
+        android:id="@+id/btnAddSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Schedule" />
+
 </LinearLayout>

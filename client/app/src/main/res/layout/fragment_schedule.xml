@@ -5,42 +5,58 @@
     android:padding="16dp">
 
     <!-- Spinner để chọn ngày trong tuần -->
-    <Spinner
-        android:id="@+id/spinnerDaysOfWeek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/days_of_week" />
+<!--    <Spinner-->
+<!--        android:id="@+id/spinnerDaysOfWeek"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:entries="@array/days_of_week" />-->
 
-    <!-- Form để thêm lịch học -->
-    <EditText
-        android:id="@+id/etTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Giờ (HH:mm)" />
+<!--    &lt;!&ndash; Form để thêm lịch học &ndash;&gt;-->
+<!--    <EditText-->
+<!--        android:id="@+id/etTime"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Giờ (HH:mm)" />-->
 
-    <EditText
-        android:id="@+id/etRoom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Phòng học" />
+<!--    <EditText-->
+<!--        android:id="@+id/etRoom"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Phòng học" />-->
 
-    <EditText
-        android:id="@+id/etSubject"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Môn học" />
+<!--    <EditText-->
+<!--        android:id="@+id/etSubject"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Môn học" />-->
 
-    <Button
-        android:id="@+id/btnAddSchedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Thêm" />
+<!--    <Button-->
+<!--        android:id="@+id/btnAddSchedule"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Thêm" />-->
 
     <!-- RecyclerView để hiển thị lịch học -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Schedule"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textSize="28sp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSchedules"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="16dp" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_home"
+        android:contentDescription="Add Schedule" />
 </LinearLayout>
