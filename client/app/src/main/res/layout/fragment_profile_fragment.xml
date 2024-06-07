@@ -47,7 +47,7 @@
                         android:drawableEnd="@drawable/ic_4"
                         android:gravity="center"
                         android:paddingStart="50dp"
-                        android:text="Alarm"
+                        android:text="Seminar"
                         android:textAlignment="viewStart"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

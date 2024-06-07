@@ -17,4 +17,8 @@
     //indicator color
     <color name="inactive">#C4C4C4</color>
     <color name="active">#50C2C9</color>
+
+    <color name="light_gray">#F5F5F5</color>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
 </resources>

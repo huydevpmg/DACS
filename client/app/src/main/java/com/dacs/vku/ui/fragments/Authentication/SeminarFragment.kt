@@ -7,15 +7,26 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.graphics.pdf.PdfDocument
+import android.graphics.pdf.PdfRenderer
 import android.os.Bundle
+import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.provider.CalendarContract
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,15 +38,19 @@ import com.dacs.vku.api.RetrofitInstance
 import com.dacs.vku.api.UserData
 import com.dacs.vku.databinding.FragmentSeminarBinding
 import com.dacs.vku.models.Seminar
+import com.dacs.vku.util.Constants.Companion.PERMISSIONS_REQUEST_CODE
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
 
+@Suppress("DEPRECATION", "NAME_SHADOWING")
 class SeminarFragment : Fragment(R.layout.fragment_seminar) {
     private lateinit var binding: FragmentSeminarBinding
     private lateinit var seminarAdapter: SeminarAdapter
@@ -55,7 +70,7 @@ class SeminarFragment : Fragment(R.layout.fragment_seminar) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSeminarBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -81,6 +96,163 @@ class SeminarFragment : Fragment(R.layout.fragment_seminar) {
         binding.rvSeminars.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = seminarAdapter
+        }
+
+        binding.btnPreviewPdf.setOnClickListener {
+            val pdfFile = createPdfFile()
+            if (pdfFile != null) {
+                showPdfPreviewDialog(pdfFile)
+            } else {
+                Toast.makeText(requireContext(), "Failed to create PDF", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun checkAndRequestPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_CALENDAR,
+            Manifest.permission.READ_CALENDAR
+        )
+
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(requireActivity(), permissionsToRequest.toTypedArray(), PERMISSIONS_REQUEST_CODE)
+        }
+    }
+
+    private fun renderPdfToImageView(pdfFile: File, imageView: ImageView, scaleFactor: Float = 1.5f) {
+        try {
+            val fileDescriptor = ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY)
+            val pdfRenderer = PdfRenderer(fileDescriptor)
+            val page = pdfRenderer.openPage(0)
+
+            val bitmap = Bitmap.createBitmap((page.width * scaleFactor ).toInt(), (page.height * scaleFactor).toInt(), Bitmap.Config.ARGB_8888)
+            val matrix = Matrix()
+            matrix.setScale(scaleFactor, scaleFactor)
+            page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+
+            imageView.setImageBitmap(bitmap)
+
+            page.close()
+            pdfRenderer.close()
+            fileDescriptor.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Failed to render PDF", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun showPdfPreviewDialog(pdfFile: File) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_pdf_preview, null)
+        val ivPdfPreview = dialogView.findViewById<ImageView>(R.id.ivPdfPreview)
+        val btnSavePdf = dialogView.findViewById<Button>(R.id.btnSavePdf)
+
+        // Set ImageView to be as large as possible
+        val layoutParams = ivPdfPreview.layoutParams
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+        ivPdfPreview.layoutParams = layoutParams
+
+        renderPdfToImageView(pdfFile, ivPdfPreview)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("PDF Preview")
+            .setView(dialogView)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        val window = dialog.window
+        if (window != null) {
+            // Make the dialog fill the screen
+            val layoutParams = WindowManager.LayoutParams()
+            layoutParams.copyFrom(window.attributes)
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+            window.attributes = layoutParams
+        }
+
+        btnSavePdf.setOnClickListener {
+            savePdfFile(pdfFile)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+    private fun savePdfFile(pdfFile: File) {
+        val directoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()
+        val destinationFile = File(directoryPath, "seminarsList.pdf")
+
+        try {
+            pdfFile.copyTo(destinationFile, overwrite = true)
+            Toast.makeText(requireContext(), "PDF saved successfully", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(requireContext(), "Failed to save PDF", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun createPdfFile(): File? {
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+
+        val canvas = page.canvas
+        val paint = Paint()
+        val titlePaint = Paint()
+        paint.textSize = 12f
+        paint.color = Color.BLACK
+        titlePaint.textSize = 20f
+        titlePaint.typeface = Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD)
+        titlePaint.color = Color.BLUE
+
+        val marginLeft = 50f
+        var yPosition = 60
+
+        canvas.drawText("Seminars Preview", marginLeft, yPosition.toFloat(), titlePaint)
+        yPosition += 40
+
+        seminarList.forEach { seminar ->
+            paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            canvas.drawText("Title: ${seminar.subject}", marginLeft, yPosition.toFloat(), paint)
+            yPosition += 20
+
+            paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+            canvas.drawText("Date: ${seminar.date}", marginLeft, yPosition.toFloat(), paint)
+            yPosition += 20
+
+            canvas.drawText("Time: ${seminar.time}", marginLeft, yPosition.toFloat(), paint)
+            yPosition += 20
+
+            canvas.drawText("Room: ${seminar.room}", marginLeft, yPosition.toFloat(), paint)
+            yPosition += 30
+
+            // Adding a separator line for better readability
+            val linePaint = Paint()
+            linePaint.color = Color.GRAY
+            linePaint.strokeWidth = 1f
+            canvas.drawLine(marginLeft, yPosition.toFloat(), pageInfo.pageWidth - marginLeft, yPosition.toFloat(), linePaint)
+            yPosition += 20
+        }
+
+        pdfDocument.finishPage(page)
+
+        val directoryPath = requireContext().cacheDir.toString()
+        val file = File(directoryPath, "SeminarsPreview.pdf")
+
+        return try {
+            pdfDocument.writeTo(FileOutputStream(file))
+            pdfDocument.close()
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            pdfDocument.close()
+            null
         }
     }
 
@@ -226,6 +398,7 @@ class SeminarFragment : Fragment(R.layout.fragment_seminar) {
         startActivity(intent)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun editSeminar(seminar: Seminar) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_seminar, null)
         val etEditSubject = dialogView.findViewById<EditText>(etEditSubject)
@@ -292,24 +465,13 @@ class SeminarFragment : Fragment(R.layout.fragment_seminar) {
         dialog.show()
     }
 
-    private fun checkAndRequestPermissions() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                arrayOf(Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR),
-                PERMISSIONS_REQUEST_WRITE_CALENDAR
-            )
-        }
-    }
 
-    companion object {
-        private const val PERMISSIONS_REQUEST_WRITE_CALENDAR = 100
-    }
 
     private fun updateSeminarOnServer(seminar: Seminar, onComplete: (Boolean) -> Unit) {
         val apiService = RetrofitInstance.api
         val call = apiService.updateSeminar(seminar)
         call.enqueue(object : Callback<ResponseBody> {
+            @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     Log.d("VKUU", "Seminar updated successfully")

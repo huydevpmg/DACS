@@ -1,7 +1,11 @@
 package com.dacs.vku.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -12,6 +16,7 @@ import com.dacs.vku.db.NotificationDatabase
 import com.dacs.vku.repository.NotificationRepository
 import com.dacs.vku.ui.viewModels.NotificationDaoTaoViewModel
 import com.dacs.vku.ui.viewModels.NotificationDaoTaoViewModelproviderFactory
+import com.dacs.vku.util.Constants.Companion.CREATE_FILE
 
 class VkuActivity : AppCompatActivity() {
     lateinit var notificationViewModel: NotificationDaoTaoViewModel
@@ -33,4 +38,6 @@ class VkuActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
     }
+
+
 }

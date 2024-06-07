@@ -24,6 +24,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_home"
+        android:src="@drawable/plus"
         android:contentDescription="Add Seminar" />
+    <Button
+        android:id="@+id/btnPreviewPdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preview PDF"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"/>
 </LinearLayout>

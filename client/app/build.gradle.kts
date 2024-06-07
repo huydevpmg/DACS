@@ -84,6 +84,8 @@ dependencies {
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.android.gms:play-services-base:18.5.0")
+    implementation("com.itextpdf:itext7-core:7.1.15")
+
 
 
 

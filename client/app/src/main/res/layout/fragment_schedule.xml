@@ -4,39 +4,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Spinner để chọn ngày trong tuần -->
-<!--    <Spinner-->
-<!--        android:id="@+id/spinnerDaysOfWeek"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:entries="@array/days_of_week" />-->
-
-<!--    &lt;!&ndash; Form để thêm lịch học &ndash;&gt;-->
-<!--    <EditText-->
-<!--        android:id="@+id/etTime"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="Giờ (HH:mm)" />-->
-
-<!--    <EditText-->
-<!--        android:id="@+id/etRoom"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="Phòng học" />-->
-
-<!--    <EditText-->
-<!--        android:id="@+id/etSubject"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:hint="Môn học" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/btnAddSchedule"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Thêm" />-->
-
-    <!-- RecyclerView để hiển thị lịch học -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,6 +24,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_home"
+        android:src="@drawable/plus"
         android:contentDescription="Add Schedule" />
+    <Button
+        android:id="@+id/btnPreviewPdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preview PDF"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"/>
 </LinearLayout>
