@@ -2,34 +2,31 @@ package com.dacs.vku.ui.fragments.Authentication
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.ContentUris
-import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.net.Uri
 import android.os.Bundle
 import android.provider.CalendarContract
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dacs.vku.R
-import com.dacs.vku.adapters.ScheduleAdapter
+import com.dacs.vku.R.id.etEditSubject
+import com.dacs.vku.adapters.SeminarAdapter
 import com.dacs.vku.api.RetrofitInstance
 import com.dacs.vku.api.UserData
-import com.dacs.vku.databinding.FragmentScheduleBinding
-import com.dacs.vku.models.Schedule
+import com.dacs.vku.databinding.FragmentSeminarBinding
+import com.dacs.vku.models.Seminar
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -37,13 +34,12 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
 import java.util.UUID
 
-class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
-    private lateinit var binding: FragmentScheduleBinding
-    private lateinit var scheduleAdapter: ScheduleAdapter
-    private val scheduleList = mutableListOf<Schedule>()
+class SeminarFragment : Fragment(R.layout.fragment_seminar) {
+    private lateinit var binding: FragmentSeminarBinding
+    private lateinit var seminarAdapter: SeminarAdapter
+    private val seminarList = mutableListOf<Seminar>()
     private var userData: UserData? = null
     private var uid: String? = null
 
@@ -53,13 +49,14 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             userData = it.getSerializable("userData") as? UserData
             uid = userData?.userId
         }
+        Log.e("haha", userData.toString())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentScheduleBinding.inflate(inflater, container, false)
+        binding = FragmentSeminarBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -67,39 +64,37 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         super.onViewCreated(view, savedInstanceState)
         checkAndRequestPermissions()
 
-        getAllSchedules()
+        getAllSeminars()
 
-        binding.fabAddSchedule.setOnClickListener {
-            addSchedule()
+        binding.fabAddSeminar.setOnClickListener {
+            addSeminar()
         }
 
         // Set up RecyclerView
-        scheduleAdapter = ScheduleAdapter(scheduleList,
+        seminarAdapter = SeminarAdapter(seminarList,
             onEditClick = {
-                schedule -> editSchedule(schedule)
-                          },
-            onDeleteClick = { schedule -> deleteSchedule(schedule) }
+                    seminar -> editSeminar(seminar)
+            },
+            onDeleteClick = { seminar -> deleteSeminar(seminar) }
         )
 
-        binding.rvSchedules.apply {
+        binding.rvSeminars.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = scheduleAdapter
+            adapter = seminarAdapter
         }
     }
 
-    private fun addSchedule() {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_schedule, null)
-        val etDate = dialogView.findViewById<EditText>(R.id.etDate)
-        val etTime = dialogView.findViewById<EditText>(R.id.etTime)
-        val etDayOfWeek = dialogView.findViewById<EditText>(R.id.etDayOfWeek)
-        val etSubject = dialogView.findViewById<EditText>(R.id.etEditSubject)
-        val etRoom = dialogView.findViewById<EditText>(R.id.etEditRoom)
-        val btnAddSchedule = dialogView.findViewById<Button>(R.id.btnAddSchedule)
+    private fun addSeminar() {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_seminar, null)
+        val etDate = dialogView.findViewById<EditText>(R.id.seDate)
+        val etTime = dialogView.findViewById<EditText>(R.id.seTime)
+        val etDayOfWeek = dialogView.findViewById<EditText>(R.id.seDayOfWeek)
+        val etSubject = dialogView.findViewById<EditText>(R.id.seEditSubject)
+        val etRoom = dialogView.findViewById<EditText>(R.id.seEditRoom)
+        val btnAddSeminar = dialogView.findViewById<Button>(R.id.btnAddSeminar)
 
-        // Placeholder to store the captured day of the week
         var dayOfWeek: Int = -1
 
-        // Set up listeners for date and time EditTexts
         etDate.setOnClickListener {
             showDatePickerDialog(etDate, etDayOfWeek) { selectedDayOfWeek ->
                 dayOfWeek = selectedDayOfWeek
@@ -111,12 +106,12 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Add Schedule")
+            .setTitle("Add Seminar")
             .setView(dialogView)
             .setNegativeButton("Cancel", null)
             .create()
 
-        btnAddSchedule.setOnClickListener {
+        btnAddSeminar.setOnClickListener {
             val subject = etSubject.text.toString()
             val room = etRoom.text.toString()
             val date = etDate.text.toString()
@@ -125,27 +120,25 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             if (subject.isEmpty() || date.isEmpty() || time.isEmpty() || room.isEmpty() || dayOfWeek == -1) {
                 Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
             } else {
-                val scheduleId = UUID.randomUUID().toString()
+                val seminarId = UUID.randomUUID().toString()
                 val userId = uid
                 val dayOfWeekString = getDayOfWeekString(dayOfWeek)
-                val scheduleData = Schedule(scheduleId, userId, dayOfWeekString, date, time, room, subject)
+                val seminarData = Seminar(seminarId, userId, dayOfWeekString, date, time, room, subject)
 
-                // Add schedule to the list
-                scheduleList.add(scheduleData)
+                seminarList.add(seminarData)
+                val sortedList = seminarList.sortedWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
+                seminarAdapter.updateSeminarList(sortedList.toMutableList())
 
-                // Sort scheduleList by date and time
-                val sortedList = scheduleList.sortedWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
-                scheduleAdapter.updateScheduleList(sortedList.toMutableList())
-
-                sendUserDataToServer(scheduleData)
-                insertEventIntoCalendar(scheduleData)
-                Toast.makeText(requireContext(), "Schedule added successfully", Toast.LENGTH_SHORT).show()
+                sendUserDataToServer(seminarData)
+                insertEventIntoCalendar(seminarData)
+                Toast.makeText(requireContext(), "Seminar added successfully", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
         }
 
         dialog.show()
     }
+
     private fun showDatePickerDialog(editText: EditText, dayOfWeekEditText: EditText, onDateSelected: (Int) -> Unit) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -156,19 +149,17 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             val formattedDate = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
             editText.setText(formattedDate)
 
-            // Set calendar to the selected date to get the day of the week
             val selectedCalendar = Calendar.getInstance()
             selectedCalendar.set(selectedYear, selectedMonth, selectedDay)
             val dayOfWeek = selectedCalendar.get(Calendar.DAY_OF_WEEK)
 
-            // Set the day of the week in the edit text
             dayOfWeekEditText.setText(getDayOfWeekString(dayOfWeek))
-
             onDateSelected(dayOfWeek)
         }, year, month, day)
 
         datePickerDialog.show()
     }
+
     private fun showTimePickerDialog(editText: EditText) {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -178,7 +169,6 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             val formattedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
             editText.setText(formattedTime)
         }, hour, minute, true)
-
         timePickerDialog.show()
     }
 
@@ -205,16 +195,14 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         return sdf.parse(time)?.time ?: 0L
     }
 
-
-    // Function to insert Event and Save Event Id
     @SuppressLint("InlinedApi")
-    private fun insertEventIntoCalendar(schedule: Schedule) {
+    private fun insertEventIntoCalendar(seminar: Seminar) {
         val cal = Calendar.getInstance()
-        val dateParts = schedule.date.split("/")
+        val dateParts = seminar.date.split("/")
         val day = dateParts[0].toInt()
-        val month = dateParts[1].toInt() - 1 // Calendar.MONTH is 0-based
+        val month = dateParts[1].toInt() - 1
         val year = dateParts[2].toInt()
-        val timeParts = schedule.time.split(":")
+        val timeParts = seminar.time.split(":")
         val hour = timeParts[0].toInt()
         val minute = timeParts[1].toInt()
 
@@ -227,45 +215,31 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
             data = CalendarContract.Events.CONTENT_URI
             putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis)
             putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endMillis)
-            val description = "Subject: ${schedule.subject} Room: ${schedule.room}"
+            val description = "Subject: ${seminar.subject} Room: ${seminar.room}"
             putExtra(CalendarContract.Events.TITLE, description)
             Log.e("VKUUU", description)
             putExtra(CalendarContract.Events.DESCRIPTION, "Subject: $description")
-            putExtra(CalendarContract.Events.EVENT_LOCATION, schedule.room)
+            putExtra(CalendarContract.Events.EVENT_LOCATION, seminar.room)
             putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY)
-            putExtra(CalendarContract.Events.RRULE, "FREQ=WEEKLY;COUNT=10")
+            putExtra(CalendarContract.Events.RRULE, "FREQ=ONCE")
         }
         startActivity(intent)
     }
 
-    // Function to edit Event
-    private fun editEventInCalendar(eventId: Long) {
-        val uri: Uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
-        val intent = Intent(Intent.ACTION_EDIT).apply {
-            data = uri
-        }
-        startActivity(intent)
-    }
-
-
-
-
-
-
-    private fun editSchedule(schedule: Schedule) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_schedule, null)
-        val etEditSubject = dialogView.findViewById<EditText>(R.id.etEditSubject)
+    private fun editSeminar(seminar: Seminar) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_seminar, null)
+        val etEditSubject = dialogView.findViewById<EditText>(etEditSubject)
         val etEditDate = dialogView.findViewById<EditText>(R.id.etEditDate)
         val etEditTime = dialogView.findViewById<EditText>(R.id.etEditTime)
         val etEditRoom = dialogView.findViewById<EditText>(R.id.etEditRoom)
         val etDayOfWeek = dialogView.findViewById<EditText>(R.id.etDayOfWeek)
-        val btnUpdateSchedule = dialogView.findViewById<Button>(R.id.btnUpdateSchedule)
+        val btnUpdateSeminar = dialogView.findViewById<Button>(R.id.btnUpdateSeminar)
 
-        etEditSubject.setText(schedule.subject)
-        etEditDate.setText(schedule.date)
-        etEditTime.setText(schedule.time)
-        etEditRoom.setText(schedule.room)
-        etDayOfWeek.setText(schedule.dayOfWeek)
+        etEditSubject.setText(seminar.subject)
+        etEditDate.setText(seminar.date)
+        etEditTime.setText(seminar.time)
+        etEditRoom.setText(seminar.room)
+        etDayOfWeek.setText(seminar.dayOfWeek)
 
         var dayOfWeek: Int = -1
 
@@ -280,24 +254,23 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         }
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Edit Schedule")
+            .setTitle("Edit Seminar")
             .setView(dialogView)
             .setNegativeButton("Cancel", null)
             .create()
 
-        btnUpdateSchedule.setOnClickListener {
+        btnUpdateSeminar.setOnClickListener {
             val updatedSubject = etEditSubject.text.toString()
             val updatedDate = etEditDate.text.toString()
             val updatedTime = etEditTime.text.toString()
             val updatedRoom = etEditRoom.text.toString()
 
-            // Use the existing dayOfWeek if not changed
-            val updatedDayOfWeek = if (dayOfWeek == -1) schedule.dayOfWeek else getDayOfWeekString(dayOfWeek)
+            val updatedDayOfWeek = if (dayOfWeek == -1) seminar.dayOfWeek else getDayOfWeekString(dayOfWeek)
 
             if (updatedSubject.isEmpty() || updatedDate.isEmpty() || updatedTime.isEmpty() || updatedRoom.isEmpty()) {
                 Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
             } else {
-                val updatedSchedule = schedule.copy(
+                val updatedSeminar = seminar.copy(
                     subject = updatedSubject,
                     dayOfWeek = updatedDayOfWeek,
                     date = updatedDate,
@@ -305,24 +278,23 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
                     room = updatedRoom
                 )
 
-                updateScheduleOnServer(updatedSchedule) { success ->
+                updateSeminarOnServer(updatedSeminar) { success ->
                     if (success) {
                         dialog.dismiss()
-                        scheduleList[scheduleList.indexOfFirst { it.scheduleId == schedule.scheduleId }] = updatedSchedule
-                        scheduleList.sortWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
-                        scheduleAdapter.notifyDataSetChanged()
-                        Toast.makeText(requireContext(), "Schedule updated successfully", Toast.LENGTH_SHORT).show()
+                        seminarList[seminarList.indexOfFirst { it.seminarId == seminar.seminarId }] = updatedSeminar
+                        seminarList.sortWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
+                        seminarAdapter.notifyDataSetChanged()
+                        Toast.makeText(requireContext(), "Seminar updated successfully", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
-
         dialog.show()
     }
+
     private fun checkAndRequestPermissions() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_CALENDAR)
             != PackageManager.PERMISSION_GRANTED) {
-
             ActivityCompat.requestPermissions(requireActivity(),
                 arrayOf(Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR),
                 PERMISSIONS_REQUEST_WRITE_CALENDAR
@@ -334,111 +306,106 @@ class ScheduleFragment : Fragment(R.layout.fragment_schedule) {
         private const val PERMISSIONS_REQUEST_WRITE_CALENDAR = 100
     }
 
-    private fun updateScheduleOnServer(schedule: Schedule, onComplete: (Boolean) -> Unit) {
+    private fun updateSeminarOnServer(seminar: Seminar, onComplete: (Boolean) -> Unit) {
         val apiService = RetrofitInstance.api
-        val call = apiService.updateSchedule(schedule)
-
+        val call = apiService.updateSeminar(seminar)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Log.d("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Schedule updated successfully")
-                    Toast.makeText(requireContext(), "Schedule updated successfully", Toast.LENGTH_SHORT).show()
-
-                    val index = scheduleList.indexOfFirst { it.scheduleId == schedule.scheduleId }
+                    Log.d("VKUU", "Seminar updated successfully")
+                    Toast.makeText(requireContext(), "Seminar updated successfully", Toast.LENGTH_SHORT).show()
+                    val index = seminarList.indexOfFirst { it.seminarId == seminar.seminarId }
                     if (index >= 0) {
-                        scheduleList[index] = schedule
-                        scheduleList.sortWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
-                        scheduleAdapter.notifyDataSetChanged()
+                        seminarList[index] = seminar
+                        seminarList.sortWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
+                        seminarAdapter.notifyDataSetChanged()
                     }
                     onComplete(true)
                 } else {
-                    Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Failed to update schedule: ${response.errorBody()?.string()}")
-                    Toast.makeText(requireContext(), "Failed to update schedule", Toast.LENGTH_SHORT).show()
+                    Log.e("VKUU", "Failed to update seminar: ${response.errorBody()?.string()}")
+                    Toast.makeText(requireContext(), "Failed to update seminar", Toast.LENGTH_SHORT).show()
                     onComplete(false)
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Error updating schedule", t)
+                Log.e("Vkuu", "Error updating seminar", t)
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
                 onComplete(false)
             }
         })
     }
 
-    private fun sendUserDataToServer(schedule: Schedule) {
+    private fun sendUserDataToServer(seminar: Seminar) {
         val apiService = RetrofitInstance.api
-        val call = apiService.addCalendar(schedule)
+        val call = apiService.addSeminar(seminar)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Log.d("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "User data sent successfully")
+                    Log.d("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "User data sent successfully")
                 } else {
-                    Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Failed to send user data: ${response.errorBody()?.string()}")
+                    Log.e("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "Failed to send user data: ${response.errorBody()?.string()}")
                     Toast.makeText(requireContext(), "Failed to send user data", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Error sending user data", t)
+                Log.e("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "Error sending user data", t)
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    private fun deleteSchedule(schedule: Schedule) {
+    private fun deleteSeminar(seminar: Seminar) {
         val apiService = RetrofitInstance.api
-
         val deleteParams = mapOf(
-            "scheduleId" to schedule.scheduleId,
+            "seminarId" to seminar.seminarId,
             "userId" to uid.orEmpty()
         )
 
-        val call = apiService.deleteSchedule(deleteParams)
+        val call = apiService.deleteSeminar(deleteParams)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Log.d("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Schedule deleted successfully")
-                    Toast.makeText(requireContext(), "Schedule deleted successfully", Toast.LENGTH_SHORT).show()
-
-                    // Remove schedule from the list and update the recycler view
-                    scheduleList.remove(schedule)
-                    val sortedList = scheduleList.sortedWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
-                    scheduleAdapter.updateScheduleList(sortedList.toMutableList())
+                    Log.d("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "Seminar deleted successfully")
+                    Toast.makeText(requireContext(), "Seminar deleted successfully", Toast.LENGTH_SHORT).show()
+                    seminarList.remove(seminar)
+                    val sortedList = seminarList.sortedWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
+                    seminarAdapter.updateSeminarList(sortedList.toMutableList())
                 } else {
-                    Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Failed to delete schedule: ${response.errorBody()?.string()}")
-                    Toast.makeText(requireContext(), "Failed to delete schedule", Toast.LENGTH_SHORT).show()
+                    Log.e("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "Failed to delete seminar: ${response.errorBody()?.string()}")
+                    Toast.makeText(requireContext(), "Failed to delete seminar", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Error deleting schedule", t)
+                Log.e("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "Error deleting seminar", t)
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    private fun getAllSchedules() {
+    private fun getAllSeminars() {
         val apiService = RetrofitInstance.api
-        val call = apiService.getAllSchedules(uid ?: "")
-        call.enqueue(object : Callback<List<Schedule>> {
-            override fun onResponse(call: Call<List<Schedule>>, response: Response<List<Schedule>>) {
+        val call = apiService.getAllSeminar(uid ?: "")
+        call.enqueue(object : Callback<List<Seminar>> {
+            override fun onResponse(call: Call<List<Seminar>>, response: Response<List<Seminar>>) {
                 if (response.isSuccessful) {
-                    val schedules = response.body()
-                    schedules?.let {
-                        scheduleList.clear()
-                        scheduleList.addAll(it)
-                        val sortedList = scheduleList.sortedWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
-                        scheduleAdapter.updateScheduleList(sortedList.toMutableList())
+                    val seminars = response.body()
+                    seminars?.let {
+                        seminarList.clear()
+                        seminarList.addAll(it)
+                        val sortedList = seminarList.sortedWith(compareBy({ parseDate(it.date) }, { parseTime(it.time) }))
+                        seminarAdapter.updateSeminarList(sortedList.toMutableList())
                     }
                 } else {
-                    Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Failed to get schedules: ${response.errorBody()?.string()}")
-                    Toast.makeText(requireContext(), "Failed to get schedules", Toast.LENGTH_SHORT).show()
+                    Log.e("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "Failed to get seminars: ${response.errorBody()?.string()}")
+                    Toast.makeText(requireContext(), "Failed to get seminars", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<List<Schedule>>, t: Throwable) {
-                Log.e("com.dacs.vku.ui.fragments.Authentication.ScheduleFragment", "Error getting schedules", t)
+            override fun onFailure(call: Call<List<Seminar>>, t: Throwable) {
+                Log.e("com.dacs.vku.ui.fragments.Authentication.SeminarFragment", "Error getting seminars", t)
                 Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show()
             }
         })

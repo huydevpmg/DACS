@@ -146,6 +146,112 @@ app.get('/get-all-schedules/:userId', async (req, res) => {
   }
 });
 
+
+
+
+
+app.post('/add-seminar', async (req, res) => {
+  // scheduleId, userId, dayOfWeekString, date, time, room, subject
+    const { seminarId, userId, dayOfWeek, date, time, room, subject } = req.body;
+    console.log(req.body)
+    if (!userId || !dayOfWeek || !time || !room || !subject || !date) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    try {
+        const seminarData = {seminarId, userId, dayOfWeek, date, time, room, subject};
+
+        const userRef = db.collection('users').doc(userId);
+        await userRef.collection('seminars').doc(seminarId).set(seminarData);
+
+        console.log('Schedule added successfully');
+        return res.status(200).json({ message: 'Schedule added successfully' });
+    } catch (err) {
+        console.error('Error adding schedule: ', err);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// Delete schedule
+app.post('/delete-seminar', async (req, res) => {
+const { seminarId, userId } = req.body;
+console.log(req.body)
+if (!seminarId || !userId) {
+  return res.status(400).json({ message: 'Missing required fields' });
+}
+
+try {
+  const seminarRef = db.collection('users').doc(userId).collection('seminars').doc(seminarId);
+  const doc = await seminarRef.get();
+
+  if (!doc.exists) {
+    return res.status(404).json({ message: 'Seminar not found' });
+  }
+
+  await seminarRef.delete();
+  console.log('Schedule deleted successfully');
+  return res.status(200).json({ message: 'Seminar deleted successfully' });
+} catch (err) {
+  console.error('Error deleting seminar: ', err);
+  return res.status(500).json({ message: 'Internal server error' });
+}
+});
+
+app.post('/update-seminar', async (req, res) => {
+const {  seminarId, userId, dayOfWeek, date, time, room, subject } = req.body;
+
+if (!userId || !dayOfWeek || !time || !room || !subject || !date) {
+  return res.status(400).json({ message: 'Missing required fields' });
+}
+
+try {
+  const seminarRef = db.collection('users').doc(userId).collection('seminars').doc(seminarId);
+  const doc = await seminarRef.get();
+
+  if (!doc.exists) {
+    return res.status(404).json({ message: 'Schedule not found' });
+  }
+
+  const updatedSeminar = {
+    dayOfWeek,
+    date,
+    time,
+    room,
+    subject
+  };
+
+  await seminarRef.update(updatedSeminar);
+  console.log('Seminar updated successfully');
+  return res.status(200).json({ message: 'Seminar updated successfully' });
+} catch (err) {
+  console.error('Error updating schedule: ', err);
+  return res.status(500).json({ message: 'Internal server error' });
+}
+});
+
+app.get('/get-all-seminars/:userId', async (req, res) => {
+const userId = req.params.userId;
+
+try {
+    const seminarsRef = db.collection('users').doc(userId).collection('seminars');
+    const snapshot = await seminarsRef.get();
+
+    let seminar = [];
+    snapshot.forEach(doc => {
+        const seminarData = doc.data();
+        seminar.push(seminarData); // Each schedule already includes scheduleId
+    });
+
+    console.log('Seminars retrieved successfully');
+    return res.status(200).json(seminar);
+} catch (err) {
+    console.error('Error getting seminars: ', err);
+    return res.status(500).json({ message: 'Internal server error' });
+}
+});
+
+
+
 app.use('/', crawlRoutes);
 
 // Start server

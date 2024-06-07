@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.dacs.vku.R
 import com.dacs.vku.databinding.FragmentNotificationBinding
 import com.dacs.vku.ui.VkuActivity
+import com.dacs.vku.ui.fragments.main.AddNoteDialogFragment
 import com.dacs.vku.ui.viewModels.NotificationDaoTaoViewModel
 import com.google.android.material.snackbar.Snackbar
 
@@ -33,9 +34,13 @@ class NotificationFragment : Fragment(R.layout.fragment_notification) {
             loadUrl(link)
         }
 
+
         binding.fab.setOnClickListener {
-            notificationDaoTaoViewModel.addToSaved(notification)
-            Snackbar.make(view, "Added to Saved!", Snackbar.LENGTH_SHORT).show()
+            AddNoteDialogFragment(notification) { note ->
+                notification.note = note
+                notificationDaoTaoViewModel.addToSaved(notification)
+                Snackbar.make(view, "Note added and saved!", Snackbar.LENGTH_SHORT).show()
+            }.show(parentFragmentManager, "AddNoteDialog")
         }
 
         binding.fab.setOnLongClickListener {

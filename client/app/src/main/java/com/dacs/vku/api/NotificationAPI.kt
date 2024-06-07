@@ -4,13 +4,16 @@ import com.dacs.vku.models.Alarm
 import com.dacs.vku.models.Notification
 import com.dacs.vku.models.NotificationResponse
 import com.dacs.vku.models.Schedule
+import com.dacs.vku.models.Seminar
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -45,8 +48,15 @@ interface NotificationAPI {
     fun updateSchedule(@Body schedule: Schedule): Call<ResponseBody>
     @GET("get-all-schedules/{userId}")
     fun getAllSchedules(@Path("userId") userId: String): Call<List<Schedule>>
-    @GET("add-alarm")
-    fun addAlarm(@Body alarm: Alarm): Call<ResponseBody>
 
+    @POST("add-seminar")
+    fun addSeminar(@Body seminar: Seminar): Call<ResponseBody>
+
+    @POST("delete-seminar")
+    fun deleteSeminar(@Body seminar: Map<String, String>): Call<ResponseBody>
+    @POST("update-seminar")
+    fun updateSeminar(@Body seminar: Seminar): Call<ResponseBody>
+    @GET("get-all-seminars/{userId}")
+    fun getAllSeminar(@Path("userId") userId: String): Call<List<Seminar>>
 }
 

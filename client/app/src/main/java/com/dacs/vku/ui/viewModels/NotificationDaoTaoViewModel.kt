@@ -236,6 +236,10 @@ class NotificationDaoTaoViewModel(
         notificationRepository.deleteNotification(notification)
     }
 
+    fun updateNotification(notification: Notification) = viewModelScope.launch {
+        notificationRepository.updateNotification(notification)
+    }
+
     // Check for internet connection
     fun internetConnection(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

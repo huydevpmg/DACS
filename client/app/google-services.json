@@ -21,6 +21,10 @@
             "package_name": "com.dacs.vku",
             "certificate_hash": "e8b134f0d44d0ab46292ec59ffdbe5bc61715446"
           }
+        },
+        {
+          "client_id": "580572019975-kmcjhb34jo9b789f47qpo05c7d1ap3t3.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [

@@ -32,23 +32,29 @@ class Profile_fragment : Fragment(R.layout.fragment_profile_fragment) {
             .into(binding.profileURL)
 
         binding.btnAlarm.setOnClickListener {
-            findNavController().navigate(R.id.action_ProfileFragment_to_AlarmFragment)
+            navigateToSeminarFragment()
 
         }
-    // Thay "profileImage" bằng ID của ImageView trong layout của bạn
         binding.btnCalendar.setOnClickListener {
-//            val bundle = Bundle().apply {
-//                putSerializable("userData", userData)
-//            }
-//            try {
-//                Log.e("VKUUUUU", "Bundle $bundle")
-//
-//                findNavController().navigate(R.id.action_ProfileFragment_to_ScheduleFragment, bundle)
-//            } catch (e: IllegalArgumentException) {
-//                Log.e("NavigationError", "Navigation failed: ${e.message}")
-//            }
             navigateToScheduleFragment()
         }
+
+        binding.btnSignOut.setOnClickListener {
+            navigateBackToLoginRegister()
+        }
+    }
+
+    private fun navigateBackToLoginRegister() {
+        val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("user_email", null)
+            putString("user_name", null)
+            putString("user_id", null)
+            putString("profile_picture_url", null)
+            apply()
+        }
+        findNavController().navigate(R.id.action_ProfileFragment_to_LoginRegister)
+
     }
     private fun getUserDataFromPreferences(): UserData? {
         val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -72,6 +78,20 @@ class Profile_fragment : Fragment(R.layout.fragment_profile_fragment) {
         try {
             Log.e("VKUUUUU", "Bundle $bundle")
             findNavController().navigate(R.id.action_ProfileFragment_to_ScheduleFragment, bundle)
+        } catch (e: IllegalArgumentException) {
+            Log.e("NavigationError", "Navigation failed: ${e.message}")
+        }
+    }
+
+    private fun navigateToSeminarFragment() {
+        val bundle = Bundle().apply {
+            putSerializable("userData", userData)
+        }
+
+        Log.e("VKUUU", bundle.toString())
+        try {
+            Log.e("VKUUUUU", "Bundle $bundle")
+            findNavController().navigate(R.id.action_ProfileFragment_to_Seminar, bundle)
         } catch (e: IllegalArgumentException) {
             Log.e("NavigationError", "Navigation failed: ${e.message}")
         }

@@ -63,8 +63,12 @@
             android:id="@+id/action_ProfileFragment_to_ScheduleFragment"
             app:destination="@id/scheduleFragment"/>
         <action
-            android:id="@+id/action_ProfileFragment_to_AlarmFragment"
-            app:destination="@id/alarmFragment"/>
+            android:id="@+id/action_ProfileFragment_to_Seminar"
+            app:destination="@id/seminarFragment"/>
+
+        <action
+            android:id="@+id/action_ProfileFragment_to_LoginRegister"
+            app:destination="@id/authenticationFragment"/>
 
     </fragment>
 
@@ -81,15 +85,15 @@
     </fragment>
 
     <fragment
-        android:id="@+id/alarmFragment"
-        android:name="com.dacs.vku.ui.fragments.alarm.AlarmFragment"
-        android:label="ScheduleFragment">
-<!--        <argument-->
-<!--            android:name="profile"-->
-<!--            app:argType="com.dacs.vku.api.UserData"-->
-<!--            android:defaultValue="@null"-->
-<!--            app:nullable="true"-->
-<!--            />-->
+        android:id="@+id/seminarFragment"
+        android:name="com.dacs.vku.ui.fragments.Authentication.SeminarFragment"
+        android:label="Seminar">
+        <argument
+            android:name="profile"
+            app:argType="com.dacs.vku.api.UserData"
+            android:defaultValue="@null"
+            app:nullable="true"
+            />
     </fragment>
 
 

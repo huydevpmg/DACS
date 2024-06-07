@@ -32,7 +32,7 @@
         android:id="@+id/etEditSubject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title" />
+        android:hint="Subject" />
 
     <EditText
         android:id="@+id/etEditRoom"
@@ -41,9 +41,9 @@
         android:hint="Room" />
 
     <Button
-        android:id="@+id/btnUpdateSchedule"
+        android:id="@+id/btnUpdateSeminar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Seminar" />
+        android:text="Update Schedule" />
 
 </LinearLayout>

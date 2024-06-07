@@ -15,6 +15,8 @@ import com.dacs.vku.R
 import com.dacs.vku.adapters.NotificationAdapter
 import com.dacs.vku.databinding.FragmentSavedFragmentsBinding
 import com.dacs.vku.ui.VkuActivity
+import com.dacs.vku.ui.fragments.main.AddNoteDialogFragment
+import com.dacs.vku.ui.fragments.main.ViewNoteDialogFragment
 import com.dacs.vku.ui.viewModels.NotificationDaoTaoViewModel
 import com.google.android.material.snackbar.Snackbar
 
@@ -31,16 +33,7 @@ class SavedFragments : Fragment(R.layout.fragment_saved_fragments) {
         setupSavedRecycler()
 
         notificationAdapter.setOnItemClickListener { notification ->
-            val bundle = Bundle().apply {
-                putSerializable("notification", notification)
-            }
-            try {
-                findNavController().navigate(R.id.action_savedFragment_to_articleFragment, bundle)
-            } catch (e: IllegalArgumentException) {
-                // Handle the case where navigation fails due to missing action or destination
-                Log.e("NavigationError", "Navigation failed: ${e.message}")
-            }
-
+            ViewNoteDialogFragment(notification).show(parentFragmentManager, "ViewNoteDialog")
         }
         val itemTouchHelperCallBack = object: ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.RIGHT or  ItemTouchHelper.LEFT) {

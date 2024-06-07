@@ -30,6 +30,7 @@ class NotificationRepository(val DB: NotificationDatabase) {
     suspend fun deleteNotification(notification: Notification) = DB.getNotificationDaoTaoDao().deleteNotificationDaoTao(notification)
 
 
+    suspend fun updateNotification(notification: Notification) = DB.getNotificationDaoTaoDao().updateNotification(notification)
 
 
 }
