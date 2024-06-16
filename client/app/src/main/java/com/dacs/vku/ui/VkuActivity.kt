@@ -16,7 +16,6 @@ import com.dacs.vku.db.NotificationDatabase
 import com.dacs.vku.repository.NotificationRepository
 import com.dacs.vku.ui.viewModels.NotificationDaoTaoViewModel
 import com.dacs.vku.ui.viewModels.NotificationDaoTaoViewModelproviderFactory
-import com.dacs.vku.util.Constants.Companion.CREATE_FILE
 
 class VkuActivity : AppCompatActivity() {
     lateinit var notificationViewModel: NotificationDaoTaoViewModel

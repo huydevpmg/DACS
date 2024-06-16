@@ -35,7 +35,7 @@ import com.dacs.vku.R
 import com.dacs.vku.R.id.etEditSubject
 import com.dacs.vku.adapters.SeminarAdapter
 import com.dacs.vku.api.RetrofitInstance
-import com.dacs.vku.api.UserData
+import com.dacs.vku.models.UserData
 import com.dacs.vku.databinding.FragmentSeminarBinding
 import com.dacs.vku.models.Seminar
 import com.dacs.vku.util.Constants.Companion.PERMISSIONS_REQUEST_CODE

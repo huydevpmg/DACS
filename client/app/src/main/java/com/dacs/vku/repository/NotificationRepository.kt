@@ -12,13 +12,6 @@ class NotificationRepository(val DB: NotificationDatabase) {
     suspend fun getNotificationKTDBCL() = RetrofitInstance.api.getNotificationKTDBCL()
 
    suspend fun searchNotification(searchQuery: String) = RetrofitInstance.api.searchForNotification(searchQuery)
-//
-
-
-
-
-
-
 
     //Insert the fav noti
     suspend fun upsert(notification: Notification) = DB.getNotificationDaoTaoDao().insertNotificationDaoTa(notification)

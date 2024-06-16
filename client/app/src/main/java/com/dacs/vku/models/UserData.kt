@@ -1,4 +1,4 @@
-package com.dacs.vku.api
+package com.dacs.vku.models
 
 import java.io.Serializable
 

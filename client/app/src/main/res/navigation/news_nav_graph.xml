@@ -55,7 +55,7 @@
         android:label="ProfileFragment" >
         <argument
             android:name="profile"
-            app:argType="com.dacs.vku.api.UserData"
+            app:argType="com.dacs.vku.models.UserData"
             android:defaultValue="@null"
             app:nullable="true"
             />
@@ -78,7 +78,7 @@
         android:label="ScheduleFragment">
         <argument
             android:name="profile"
-            app:argType="com.dacs.vku.api.UserData"
+            app:argType="com.dacs.vku.models.UserData"
             android:defaultValue="@null"
             app:nullable="true"
             />
@@ -90,7 +90,7 @@
         android:label="Seminar">
         <argument
             android:name="profile"
-            app:argType="com.dacs.vku.api.UserData"
+            app:argType="com.dacs.vku.models.UserData"
             android:defaultValue="@null"
             app:nullable="true"
             />

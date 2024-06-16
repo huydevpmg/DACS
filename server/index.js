@@ -43,9 +43,8 @@ app.post('/verify-user', async (req, res) => {
     }
   });
 
-  app.use('/', scheduleRoutes);
-  app.use('/', seminarRoutes);
-
+app.use('/', scheduleRoutes);
+app.use('/', seminarRoutes);
 app.use('/', crawlRoutes);
 
 // Start server

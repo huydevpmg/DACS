@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.dacs.vku.R
 import com.dacs.vku.api.GoogleAuthUiClient
 import com.dacs.vku.api.RetrofitInstance
-import com.dacs.vku.api.UserData
+import com.dacs.vku.models.UserData
 import com.dacs.vku.databinding.FragmentLoginRegisterBinding
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
@@ -46,6 +46,7 @@ class LoginRegister : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+//        Lưu sẵn thông tin cho lần đăng nhập tiêp theo
         val username = sharedPreferences.getString("user_name", null)
         val email = sharedPreferences.getString("user_email", null)
         val userId = sharedPreferences.getString("user_id", null)

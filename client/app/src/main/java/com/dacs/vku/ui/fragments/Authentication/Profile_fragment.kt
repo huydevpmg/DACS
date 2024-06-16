@@ -8,7 +8,7 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.dacs.vku.R
-import com.dacs.vku.api.UserData
+import com.dacs.vku.models.UserData
 import com.dacs.vku.databinding.FragmentProfileFragmentBinding
 
 

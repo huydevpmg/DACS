@@ -14,5 +14,4 @@ data class Notification(
     val spanText: String,
     val title: String,
     var note: String? = null // Add this field
-
 ):Serializable

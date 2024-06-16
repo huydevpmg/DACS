@@ -5,10 +5,8 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ContentUris
-import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Matrix
@@ -38,7 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dacs.vku.R
 import com.dacs.vku.adapters.ScheduleAdapter
 import com.dacs.vku.api.RetrofitInstance
-import com.dacs.vku.api.UserData
+import com.dacs.vku.models.UserData
 import com.dacs.vku.databinding.FragmentScheduleBinding
 import com.dacs.vku.models.Schedule
 import com.dacs.vku.util.Constants
@@ -51,7 +49,6 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
 import java.util.UUID
 
 class ScheduleFragment : Fragment(R.layout.fragment_schedule) {

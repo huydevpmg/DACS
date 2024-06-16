@@ -52,7 +52,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="RtlCompat" />
+                        tools:ignore="RtlCompat"/>
 
                     <Button
                         android:id="@+id/btnCalendar"
@@ -77,6 +77,7 @@
                     android:layout_height="360dp"
                     android:background="@drawable/top_background"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 

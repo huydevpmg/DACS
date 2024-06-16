@@ -1,9 +1,13 @@
+@file:Suppress("DEPRECATION")
+
 package com.dacs.vku.api
 
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import com.dacs.vku.R
+import com.dacs.vku.models.SignInResult
+import com.dacs.vku.models.UserData
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -14,6 +18,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.tasks.await
 
+@Suppress("DEPRECATION")
 class GoogleAuthUiClient(
     private val context: Context
 ) {
@@ -57,25 +62,6 @@ class GoogleAuthUiClient(
         }
     }
 
-    suspend fun signOut() {
-        try {
-            oneTapClient.signOut().await()
-            auth.signOut()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    fun getSignedInUser(): UserData? {
-        return auth.currentUser?.let {
-            UserData(
-                username = it.displayName,
-                email = it.email,
-                userId = it.uid,
-                profilePictureUrl = it.photoUrl?.toString()
-            )
-        }
-    }
 
     private fun buildSignInRequest(): BeginSignInRequest {
         return BeginSignInRequest.Builder()

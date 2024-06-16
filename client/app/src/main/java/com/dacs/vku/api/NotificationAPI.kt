@@ -1,19 +1,15 @@
 package com.dacs.vku.api
 
-import com.dacs.vku.models.Alarm
 import com.dacs.vku.models.Notification
-import com.dacs.vku.models.NotificationResponse
 import com.dacs.vku.models.Schedule
 import com.dacs.vku.models.Seminar
+import com.dacs.vku.models.UserData
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.POST
-import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 

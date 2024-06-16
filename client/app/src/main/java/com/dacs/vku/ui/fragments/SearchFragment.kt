@@ -19,15 +19,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dacs.vku.R
 import com.dacs.vku.adapters.NotificationAdapter
-import com.dacs.vku.databinding.FragmentDaoTaoBinding
 import com.dacs.vku.databinding.FragmentSearchBinding
 import com.dacs.vku.ui.VkuActivity
 import com.dacs.vku.ui.viewModels.NotificationDaoTaoViewModel
-import com.dacs.vku.util.Constants.Companion.SEARCH_NEWS_TIME_DELAY
 import com.dacs.vku.util.Resources
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 

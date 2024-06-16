@@ -1,4 +1,4 @@
-package com.dacs.vku.api
+package com.dacs.vku.models
 
 data class SignInResult(
     val user: UserData?,
